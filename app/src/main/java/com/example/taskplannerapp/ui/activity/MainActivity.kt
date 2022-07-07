@@ -15,6 +15,7 @@ import com.example.taskplannerapp.databinding.ActivityMainBinding
 import com.example.taskplannerapp.service.AuthRequest
 import com.example.taskplannerapp.service.AuthService
 import com.example.taskplannerapp.service.TaskService
+import com.example.taskplannerapp.storage.LocalStorage
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -32,6 +33,9 @@ class MainActivity : AppCompatActivity() {
 
     @Inject
     lateinit var authService: AuthService
+
+    @Inject
+    lateinit var localStorage: LocalStorage
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -56,6 +60,7 @@ class MainActivity : AppCompatActivity() {
             val token = authService.authenticate(AuthRequest("santiago@mail.com", "passw0rd")).body()?.accessToken
             if (token != null) {
                 Log.d("Developer", token)
+                localStorage.saveToken(token)
             }else{
                 Log.d("Developer", "Token Nulo")
             }

@@ -2,12 +2,14 @@ package com.example.taskplannerapp.dependenciesinjection
 
 
 import android.content.Context
-import android.content.SharedPreferences
+import androidx.security.crypto.EncryptedSharedPreferences
+import androidx.security.crypto.MasterKeys
 import com.example.taskplannerapp.service.AuthService
 import com.example.taskplannerapp.service.JWTInterceptor
 import com.example.taskplannerapp.service.TaskService
 import com.example.taskplannerapp.storage.LocalStorage
 import com.example.taskplannerapp.storage.SharedPreferencesLocalStorage
+import com.example.taskplannerapp.utils.ENCRYPTED_SHARED_PREFERENCES_FILE_NAME
 import com.example.taskplannerapp.utils.SHARED_PREFERENCES_FILE_NAME
 import com.google.gson.GsonBuilder
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
@@ -20,9 +22,8 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import retrofit2.create
 import java.util.concurrent.TimeUnit
-import kotlin.text.Typography.dagger
+
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -30,7 +31,17 @@ object AppModule {
 
     @Provides
     fun providesLocalStorage(@ApplicationContext context: Context): LocalStorage{
-        return SharedPreferencesLocalStorage(context.getSharedPreferences(SHARED_PREFERENCES_FILE_NAME, Context.MODE_PRIVATE))
+        //return SharedPreferencesLocalStorage(context.getSharedPreferences(SHARED_PREFERENCES_FILE_NAME, Context.MODE_PRIVATE))
+        //Provide secure shared preferences
+        val masterKeyAlias = MasterKeys.getOrCreate(MasterKeys.AES256_GCM_SPEC)
+        return SharedPreferencesLocalStorage(EncryptedSharedPreferences.create(
+            ENCRYPTED_SHARED_PREFERENCES_FILE_NAME,
+            masterKeyAlias,
+            context,
+            EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
+            EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
+        ))
+
     }
 
     @Provides

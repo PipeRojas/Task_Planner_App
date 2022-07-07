@@ -8,7 +8,7 @@ class JWTInterceptor(private val localStorage: LocalStorage):Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
         val request = chain.request().newBuilder()
         val token = localStorage.getToken()
-        if(token != null){
+        if(token != null && token != ""){
             request.addHeader("Authorization", "Bearer $token")
         }
         return chain.proceed(request.build())
