@@ -11,6 +11,8 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import android.view.Menu
 import android.view.MenuItem
 import com.example.taskplannerapp.R
+import com.example.taskplannerapp.data.AppDatabase
+import com.example.taskplannerapp.data.entity.Task
 import com.example.taskplannerapp.databinding.ActivityMainBinding
 import com.example.taskplannerapp.service.AuthRequest
 import com.example.taskplannerapp.service.AuthService
@@ -36,6 +38,9 @@ class MainActivity : AppCompatActivity() {
 
     @Inject
     lateinit var localStorage: LocalStorage
+
+    @Inject
+    lateinit var appDatabase: AppDatabase
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -66,8 +71,12 @@ class MainActivity : AppCompatActivity() {
             }
             val response = taskService.getAllTasks()
             if(response.isSuccessful){
-                val taskList = response.body()
-                Log.d("Developer", "Response: $taskList")
+                val dtoTaskList = response.body()
+                //Guardar en base de datos
+                if (dtoTaskList != null) {
+                    appDatabase.taskDao().insertAll(dtoTaskList.map { taskDTO -> Task(taskDTO) })
+                }
+                Log.d("Developer", "Response: $dtoTaskList")
             }
         }
     }

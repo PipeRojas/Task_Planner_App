@@ -2,13 +2,17 @@ package com.example.taskplannerapp.dependenciesinjection
 
 
 import android.content.Context
+import androidx.room.Room
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKeys
+import com.example.taskplannerapp.data.AppDatabase
+import com.example.taskplannerapp.data.dao.TaskDao
 import com.example.taskplannerapp.service.AuthService
 import com.example.taskplannerapp.service.JWTInterceptor
 import com.example.taskplannerapp.service.TaskService
 import com.example.taskplannerapp.storage.LocalStorage
 import com.example.taskplannerapp.storage.SharedPreferencesLocalStorage
+import com.example.taskplannerapp.utils.DATABASE_NAME
 import com.example.taskplannerapp.utils.ENCRYPTED_SHARED_PREFERENCES_FILE_NAME
 import com.example.taskplannerapp.utils.SHARED_PREFERENCES_FILE_NAME
 import com.google.gson.GsonBuilder
@@ -42,6 +46,11 @@ object AppModule {
             EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
         ))
 
+    }
+
+    @Provides
+    fun providesDatabase(@ApplicationContext context: Context): AppDatabase{
+        return Room.databaseBuilder(context, AppDatabase::class.java, DATABASE_NAME).build()
     }
 
     @Provides
