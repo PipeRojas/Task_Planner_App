@@ -12,6 +12,7 @@ import android.view.Menu
 import android.view.MenuItem
 import com.example.taskplannerapp.R
 import com.example.taskplannerapp.data.AppDatabase
+import com.example.taskplannerapp.data.dao.TaskDao
 import com.example.taskplannerapp.data.entity.Task
 import com.example.taskplannerapp.databinding.ActivityMainBinding
 import com.example.taskplannerapp.service.AuthRequest
@@ -40,7 +41,7 @@ class MainActivity : AppCompatActivity() {
     lateinit var localStorage: LocalStorage
 
     @Inject
-    lateinit var appDatabase: AppDatabase
+    lateinit var taskDao: TaskDao
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -73,10 +74,10 @@ class MainActivity : AppCompatActivity() {
             if(response.isSuccessful){
                 val dtoTaskList = response.body()
                 //Guardar en base de datos
-                if (dtoTaskList != null) {
-                    appDatabase.taskDao().insertAll(dtoTaskList.map { taskDTO -> Task(taskDTO) })
+                dtoTaskList?.map { taskDTO ->
+                    Log.d("Developer", "It: $taskDTO")
+                    taskDao.insert(Task(taskDTO))
                 }
-                Log.d("Developer", "Response: $dtoTaskList")
             }
         }
     }

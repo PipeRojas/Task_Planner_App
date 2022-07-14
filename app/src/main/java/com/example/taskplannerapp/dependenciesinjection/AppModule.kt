@@ -2,9 +2,11 @@ package com.example.taskplannerapp.dependenciesinjection
 
 
 import android.content.Context
+import android.os.Build
 import androidx.room.Room
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKeys
+import com.example.taskplannerapp.BuildConfig
 import com.example.taskplannerapp.data.AppDatabase
 import com.example.taskplannerapp.data.dao.TaskDao
 import com.example.taskplannerapp.service.AuthService
@@ -49,11 +51,6 @@ object AppModule {
     }
 
     @Provides
-    fun providesDatabase(@ApplicationContext context: Context): AppDatabase{
-        return Room.databaseBuilder(context, AppDatabase::class.java, DATABASE_NAME).build()
-    }
-
-    @Provides
     fun provideJWTInterceptor(localStorage: LocalStorage): JWTInterceptor{
         return JWTInterceptor(localStorage)
     }
@@ -74,7 +71,7 @@ object AppModule {
             .create()
 
         return Retrofit.Builder()
-            .baseUrl("https://tasks-planner-api.herokuapp.com/")
+            .baseUrl(BuildConfig.TASK_API_BASE_URL)
             .client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create(gson))
             .addCallAdapterFactory(CoroutineCallAdapterFactory())
@@ -89,5 +86,15 @@ object AppModule {
     @Provides
     fun providesAuthService(retrofit: Retrofit):AuthService{
         return retrofit.create(AuthService::class.java)
+    }
+
+    @Provides
+    fun providesAppDatabase(@ApplicationContext context: Context): AppDatabase{
+        return Room.databaseBuilder(context, AppDatabase::class.java, DATABASE_NAME).build()
+    }
+
+    @Provides
+    fun providesTaskDao(appDatabase: AppDatabase): TaskDao{
+        return appDatabase.taskDao()
     }
 }
