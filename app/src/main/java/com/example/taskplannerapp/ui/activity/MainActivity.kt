@@ -10,6 +10,9 @@ import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import android.view.Menu
 import android.view.MenuItem
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.get
 import com.example.taskplannerapp.R
 import com.example.taskplannerapp.data.AppDatabase
 import com.example.taskplannerapp.data.dao.TaskDao
@@ -31,17 +34,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
 
-    @Inject
-    lateinit var taskService: TaskService
-
-    @Inject
-    lateinit var authService: AuthService
-
-    @Inject
-    lateinit var localStorage: LocalStorage
-
-    @Inject
-    lateinit var taskDao: TaskDao
+    //Declare ViewModel
+    private lateinit var viewModel: MainActivityViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,26 +54,16 @@ class MainActivity : AppCompatActivity() {
                 .setAction("Action", null).show()
         }
 
-        //REST Service usage
-        GlobalScope.launch(Dispatchers.IO) {
-            //Authentication
-            val token = authService.authenticate(AuthRequest("santiago@mail.com", "passw0rd")).body()?.accessToken
-            if (token != null) {
-                Log.d("Developer", token)
-                localStorage.saveToken(token)
-            }else{
-                Log.d("Developer", "Token Nulo")
-            }
-            val response = taskService.getAllTasks()
-            if(response.isSuccessful){
-                val dtoTaskList = response.body()
-                //Guardar en base de datos
-                dtoTaskList?.map { taskDTO ->
-                    Log.d("Developer", "It: $taskDTO")
-                    taskDao.insert(Task(taskDTO))
-                }
-            }
+        //Instantiate ViewModel
+        viewModel = ViewModelProvider(this)[MainActivityViewModel::class.java]
+        //Add observable to tasks list
+        viewModel.tasks.observe(this) { tasks ->
+            Log.d("Developer", "Obtained tasks: $tasks")
         }
+        //Consume service to authenticate
+        viewModel.authenticate()
+        //Consume service to obtain tasks
+        viewModel.getTasks()
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
