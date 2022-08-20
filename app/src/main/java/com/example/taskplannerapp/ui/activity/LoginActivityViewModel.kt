@@ -12,13 +12,11 @@ import com.example.taskplannerapp.service.TaskService
 import com.example.taskplannerapp.storage.LocalStorage
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import javax.inject.Inject
 
 @HiltViewModel
-class MainActivityViewModel @Inject constructor(
+class LoginActivityViewModel @Inject constructor(
     private val taskService: TaskService,
     private val authService: AuthService,
     private val localStorage: LocalStorage,
@@ -30,7 +28,7 @@ class MainActivityViewModel @Inject constructor(
     val tasks: LiveData<MutableList<Task>>
     get() = _tasks
 
-    fun authenticate(){
+    fun authenticateHardCodedUser(){
         GlobalScope.launch(Dispatchers.IO) {
             //Authentication
             val token = authService.authenticate(AuthRequest("santiago@mail.com", "passw0rd")).body()?.accessToken
@@ -41,6 +39,23 @@ class MainActivityViewModel @Inject constructor(
                 Log.d("Developer", "Token Nulo")
             }
         }
+    }
+
+    fun authenticate(user: String, password: String): Job{
+        return GlobalScope.launch(Dispatchers.IO) {
+            //Authentication
+            val token = authService.authenticate(AuthRequest(user, password)).body()?.accessToken
+            if (token != null) {
+                Log.d("Developer", token)
+                localStorage.saveToken(token)
+            }else{
+                Log.d("Developer", "Token Nulo")
+            }
+        }.job
+    }
+
+    fun isAuthenticated(): Boolean{
+        return !localStorage.getToken().isNullOrEmpty()
     }
 
     fun getTasks(){

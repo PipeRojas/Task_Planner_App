@@ -10,23 +10,10 @@ import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import android.view.Menu
 import android.view.MenuItem
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.get
 import com.example.taskplannerapp.R
-import com.example.taskplannerapp.data.AppDatabase
-import com.example.taskplannerapp.data.dao.TaskDao
-import com.example.taskplannerapp.data.entity.Task
 import com.example.taskplannerapp.databinding.ActivityMainBinding
-import com.example.taskplannerapp.service.AuthRequest
-import com.example.taskplannerapp.service.AuthService
-import com.example.taskplannerapp.service.TaskService
-import com.example.taskplannerapp.storage.LocalStorage
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
@@ -35,7 +22,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
 
     //Declare ViewModel
-    private lateinit var viewModel: MainActivityViewModel
+    private lateinit var viewModel: LoginActivityViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,13 +42,13 @@ class MainActivity : AppCompatActivity() {
         }
 
         //Instantiate ViewModel
-        viewModel = ViewModelProvider(this)[MainActivityViewModel::class.java]
+        viewModel = ViewModelProvider(this)[LoginActivityViewModel::class.java]
         //Add observable to tasks list
         viewModel.tasks.observe(this) { tasks ->
             Log.d("Developer", "Obtained tasks: $tasks")
         }
         //Consume service to authenticate
-        viewModel.authenticate()
+        viewModel.authenticateHardCodedUser()
         //Consume service to obtain tasks
         viewModel.getTasks()
     }

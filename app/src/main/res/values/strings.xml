@@ -10,4 +10,10 @@
     <string name="initial_page">Initial Page</string>
     <string name="hello_first_fragment">Hello first fragment</string>
     <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
+    <string name="action_sign_in">Iniciar Sesión</string>
+    <string name="action_sign_in_short">Contraseña</string>
+    <string name="prompt_password">Contraseña</string>
+    <string name="prompt_email">Usuario</string>
+    <string name="field_cannot_be_empty">El campo no puede ser vacío</string>
+    <string name="auth_error">Error de autenticación</string>
 </resources>
