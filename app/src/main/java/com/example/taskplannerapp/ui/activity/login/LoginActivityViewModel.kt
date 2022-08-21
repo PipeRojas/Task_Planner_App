@@ -1,4 +1,4 @@
-package com.example.taskplannerapp.ui.activity
+package com.example.taskplannerapp.ui.activity.login
 
 import android.util.Log
 import androidx.lifecycle.LiveData
@@ -10,7 +10,6 @@ import com.example.taskplannerapp.service.AuthRequest
 import com.example.taskplannerapp.service.AuthService
 import com.example.taskplannerapp.service.TaskService
 import com.example.taskplannerapp.storage.LocalStorage
-import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
 import javax.inject.Inject

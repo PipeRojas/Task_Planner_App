@@ -16,4 +16,9 @@
     <string name="prompt_email">Usuario</string>
     <string name="field_cannot_be_empty">El campo no puede ser vacío</string>
     <string name="auth_error">Error de autenticación</string>
+    <string name="taskname">Task Name</string>
+    <string name="taskDescription">Task Description</string>
+    <string name="taskStatus">Task Status</string>
+    <string name="taskAssignedTo">Task Assigned To</string>
+    <string name="taskDueDate">Task Due Date</string>
 </resources>

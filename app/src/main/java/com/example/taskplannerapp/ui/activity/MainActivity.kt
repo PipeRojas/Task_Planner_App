@@ -13,6 +13,7 @@ import android.view.MenuItem
 import androidx.lifecycle.ViewModelProvider
 import com.example.taskplannerapp.R
 import com.example.taskplannerapp.databinding.ActivityMainBinding
+import com.example.taskplannerapp.ui.activity.login.LoginActivityViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
